@@ -223,6 +223,14 @@
 </style>
 
 <style>
+  .subject-toggle{display:flex; gap:8px; justify-content:center; margin-bottom:28px;}
+  .subject-btn{
+    font-family:'Jalnan',-apple-system,sans-serif; font-weight:normal; font-size:15px;
+    padding:9px 20px; border-radius:999px; border:1.5px solid var(--line); background:#FFF;
+    color:var(--pink-deep); cursor:pointer;
+  }
+  .subject-btn:hover{background:var(--pink-bg); border-color:var(--pink-light);}
+  .subject-btn.active{background:var(--pink); border-color:var(--pink); color:#fff;}
   .quiz-step{display:none;}
   .quiz-step.active{display:block; animation:fadeIn .25s ease;}
   @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
@@ -364,18 +372,8 @@
 </table>
 </div></div>
     <div class="intro-box" style="margin-top:18px; background:var(--pink-bg); border-color:transparent;"><strong>🤯 이마저도 복잡해요… 그냥 투빈맘 따라할게요! 정해주세요!</strong><br><br>
-<a href="#quiz" onclick="showSection('quiz', event)" style="display:inline-flex; align-items:center; gap:6px; background:var(--pink-deep); color:#fff; font-weight:800; font-size:14px; text-decoration:none; padding:10px 18px; border-radius:999px; margin-bottom:18px;">🎯 학년·수준만 고르면 바로 추천받기</a><br><br>
-<strong>우리 아이는 보통 수준입니다⬇️</strong>
-- 1학년 1학기: 연산(꼭공), 기초개념(바빠 시계와 시간), 창의 사고력수학 팩토
-- 1학년 2학기: 연산&사고력 계속, + 디딤돌 기응
-- 2학년 1학기: 1학년 2학기 해보고, 잘하면 단계 올리기! + 문장제
-- 2학년 2학기: 2학년 2학기 해보고, 잘하면 단계 올리기! (문장제 잘하면 패스 해도 됨!)
-
-<strong>우리 아이는 높음 수준입니다⬇️</strong>
-- 1학년 1학기: 연산(꼭공), 기초개념(바빠 시계와 시간), 사고력 필즈
-- 1학년 2학기: 연산&사고력 계속, + 점프 왕수학
-- 2학년 1학기: 1학년 2학기 해보고, 잘하면 선행 쭉쭉! (점프 왕수학 풀어봤으면 → 디딤돌 최상위 S도 추천!) + 문장제
-- 2학년 2학기: 2학년 2학기 해보고, 잘하면 선행 쭉쭉! (디딤돌 최상위 S 완료되면 → 디딤돌 최상위도 추천!)</div>
+아이 학년·학기와 수준만 고르면, 투빈맘이 추천하는 로드맵을 바로 보여드려요.<br><br>
+<a href="#quiz" onclick="showSection('quiz', event); pickSubject('math');" style="display:inline-flex; align-items:center; gap:6px; background:var(--pink-deep); color:#fff; font-weight:800; font-size:14px; text-decoration:none; padding:10px 18px; border-radius:999px;">🎯 수학 맞춤 로드맵 보러가기</a></div>
   </section>
 
   <!-- ============ 국어 ============ -->
@@ -486,26 +484,22 @@
 </table>
 </div></div>
     <div class="intro-box" style="margin-top:18px; background:var(--pink-bg); border-color:transparent;"><strong>🤯 이마저도 복잡해요… 그냥 투빈맘 따라할게요! 정해주세요!</strong><br><br>
-<strong>우리 아이는 기초 수준입니다⬇️</strong>
-- 1학년 1학기: 하루 10분 또박또박 예쁜 글씨 + 예비초등 공습국어 세트(전 7권)
-- 1학년 2학기: 만화로 배우는 또박또박 따라쓰기 시리즈 + 완자 공부력 독해 시작하기
-- 2학년 1학기: 달곰한 문해력 초등 독해 + 완자 공부력 초등 전과목 어휘
-- 2학년 2학기: 4줄 요약 독해 + 우공비 일일어휘
-
-<strong>우리 아이는 보통 수준입니다⬇️</strong>
-- 1학년 1학기: 만화로 배우는 또박또박 따라쓰기 시리즈 + 달곰한 문해력 초등 독해
-- 1학년 2학기: 만화로 배우는 또박또박 따라쓰기 시리즈 + 하루 한장 비문학 독해
-- 2학년 1학기: 4줄 요약 독해 + 빠작 초등 국어 어휘x독해
-- 2학년 2학기: 글공 + 뿌리깊은 초등국어 어휘편</div>
+아이 학년·학기와 수준만 고르면, 투빈맘이 추천하는 로드맵을 바로 보여드려요.<br><br>
+<a href="#quiz" onclick="showSection('quiz', event); pickSubject('kor');" style="display:inline-flex; align-items:center; gap:6px; background:var(--pink-deep); color:#fff; font-weight:800; font-size:14px; text-decoration:none; padding:10px 18px; border-radius:999px;">🎯 국어 맞춤 로드맵 보러가기</a></div>
   </section>
 
   <!-- ============ 맞춤 추천(퀴즈) ============ -->
   <section class="book-section" id="quiz">
     <div class="section-head">
       <span class="kicker">QUIZ</span>
-      <h2>🎯 우리 아이 수학 로드맵 찾기</h2>
+      <h2>🎯 우리 아이 맞춤 로드맵 찾기</h2>
     </div>
-    <div class="intro-box">위 수학 문제집 List에서 소개한 "그냥 투빈맘 따라할게요" 추천 조합을, 학년·학기와 수준만 고르면 바로 확인할 수 있게 만들었어요. 지금 우리 아이 상황에 맞는 단계부터 확인해보세요 😊</div>
+    <div class="intro-box">"그냥 투빈맘 따라할게요! 정해주세요" 추천 조합을, 학년·학기와 수준만 고르면 바로 확인할 수 있게 만들었어요. 지금 우리 아이 상황에 맞는 단계부터 확인해보세요 😊</div>
+
+    <div class="subject-toggle">
+      <button class="subject-btn active" id="subject-btn-math" onclick="pickSubject('math')">📘 수학편</button>
+      <button class="subject-btn" id="subject-btn-kor" onclick="pickSubject('kor')">📕 국어편</button>
+    </div>
 
     <div class="quiz-progress" id="quiz-progress">
       <i data-step="1" class="on"></i><i data-step="2"></i><i data-step="3"></i>
@@ -522,11 +516,8 @@
     </div>
 
     <div class="quiz-step" id="step-level">
-      <p class="quiz-q">수학 수준은<br>어느 정도인가요?</p>
-      <div class="choice-grid">
-        <button class="choice-btn" onclick="pickLevel('보통')">보통<span class="sub">학교 진도를 무난하게<br>따라가는 편이에요</span></button>
-        <button class="choice-btn" onclick="pickLevel('높음')">높음<span class="sub">심화·선행도<br>잘 소화하는 편이에요</span></button>
-      </div>
+      <p class="quiz-q" id="level-question">수학 수준은<br>어느 정도인가요?</p>
+      <div class="choice-grid" id="level-choices"></div>
       <div class="step-nav"><button class="step-back" onclick="quizGoStep(1)">← 이전으로</button></div>
     </div>
 
@@ -766,22 +757,71 @@ function initActiveSection(){
 
 /* ---- 맞춤 추천 퀴즈 ---- */
 const GRADE_STAGES = ["1학년 1학기","1학년 2학기","2학년 1학기","2학년 2학기"];
-const ROADMAP = {
-  "보통": [
-    "연산(꼭공), 기초개념(바빠 시계와 시간), 창의 사고력수학 팩토",
-    "연산&사고력 계속, + 디딤돌 기응",
-    "1학년 2학기 해보고, 잘하면 단계 올리기! + 문장제",
-    "2학년 2학기 해보고, 잘하면 단계 올리기! (문장제 잘하면 패스 해도 됨!)",
+
+const SUBJECT_META = {
+  math: { label:"수학", question:"수학 수준은<br>어느 정도인가요?" },
+  kor:  { label:"국어", question:"국어 수준은<br>어느 정도인가요?" },
+};
+
+const LEVEL_OPTIONS = {
+  math: [
+    {key:"보통", sub:"학교 진도를 무난하게<br>따라가는 편이에요"},
+    {key:"높음", sub:"심화·선행도<br>잘 소화하는 편이에요"},
   ],
-  "높음": [
-    "연산(꼭공), 기초개념(바빠 시계와 시간), 사고력 필즈",
-    "연산&사고력 계속, + 점프 왕수학",
-    "1학년 2학기 해보고, 잘하면 선행 쭉쭉! (점프 왕수학 풀어봤으면 → 디딤돌 최상위 S도 추천!) + 문장제",
-    "2학년 2학기 해보고, 잘하면 선행 쭉쭉! (디딤돌 최상위 S 완료되면 → 디딤돌 최상위도 추천!)",
+  kor: [
+    {key:"기초", sub:"국어 학습을 이제<br>막 시작하는 단계예요"},
+    {key:"보통", sub:"글 읽기·이해가<br>비교적 편한 편이에요"},
   ],
 };
-let quizState = { grade: null, level: null };
 
+const ROADMAP = {
+  math: {
+    "보통": [
+      "연산(꼭공), 기초개념(바빠 시계와 시간), 창의 사고력수학 팩토",
+      "연산&사고력 계속, + 디딤돌 기응",
+      "1학년 2학기 해보고, 잘하면 단계 올리기! + 문장제",
+      "2학년 2학기 해보고, 잘하면 단계 올리기! (문장제 잘하면 패스 해도 됨!)",
+    ],
+    "높음": [
+      "연산(꼭공), 기초개념(바빠 시계와 시간), 사고력 필즈",
+      "연산&사고력 계속, + 점프 왕수학",
+      "1학년 2학기 해보고, 잘하면 선행 쭉쭉! (점프 왕수학 풀어봤으면 → 디딤돌 최상위 S도 추천!) + 문장제",
+      "2학년 2학기 해보고, 잘하면 선행 쭉쭉! (디딤돌 최상위 S 완료되면 → 디딤돌 최상위도 추천!)",
+    ],
+  },
+  kor: {
+    "기초": [
+      "하루 10분 또박또박 예쁜 글씨 + 예비초등 공습국어 세트(전 7권)",
+      "만화로 배우는 또박또박 따라쓰기 시리즈 + 완자 공부력 독해 시작하기",
+      "달곰한 문해력 초등 독해 + 완자 공부력 초등 전과목 어휘",
+      "4줄 요약 독해 + 우공비 일일어휘",
+    ],
+    "보통": [
+      "만화로 배우는 또박또박 따라쓰기 시리즈 + 달곰한 문해력 초등 독해",
+      "만화로 배우는 또박또박 따라쓰기 시리즈 + 하루 한장 비문학 독해",
+      "4줄 요약 독해 + 빠작 초등 국어 어휘x독해",
+      "글공 + 뿌리깊은 초등국어 어휘편",
+    ],
+  },
+};
+
+let quizState = { subject: "math", grade: null, level: null };
+
+function renderLevelChoices(subject){
+  document.getElementById("subject-btn-math").classList.toggle("active", subject === "math");
+  document.getElementById("subject-btn-kor").classList.toggle("active", subject === "kor");
+  document.getElementById("level-question").innerHTML = SUBJECT_META[subject].question;
+  document.getElementById("level-choices").innerHTML = LEVEL_OPTIONS[subject].map(o =>
+    `<button class="choice-btn" onclick="pickLevel('${o.key}')">${o.key}<span class="sub">${o.sub}</span></button>`
+  ).join("");
+}
+function pickSubject(subject){
+  quizState.subject = subject;
+  quizState.grade = null;
+  quizState.level = null;
+  renderLevelChoices(subject);
+  quizGoStep(1);
+}
 function pickGrade(g){
   quizState.grade = g;
   quizGoStep(2);
@@ -798,9 +838,10 @@ function quizGoStep(n){
   if (sec) sec.scrollIntoView({behavior:"smooth", block:"start"});
 }
 function renderQuizResult(){
-  document.getElementById("result-badge").textContent = `${quizState.grade} · ${quizState.level} 수준 로드맵`;
+  const meta = SUBJECT_META[quizState.subject];
+  document.getElementById("result-badge").textContent = `${quizState.grade} · ${meta.label} ${quizState.level} 수준 로드맵`;
   const idx = GRADE_STAGES.indexOf(quizState.grade);
-  const lines = ROADMAP[quizState.level];
+  const lines = ROADMAP[quizState.subject][quizState.level];
   const html = GRADE_STAGES.map((stage, i) => {
     const cls = i < idx ? "past" : i === idx ? "current" : "";
     const nowBadge = i === idx ? `<span class="now-badge">지금 여기!</span>` : "";
@@ -812,6 +853,7 @@ function renderQuizResult(){
   }).join("");
   document.getElementById("timeline").innerHTML = html;
 }
+renderLevelChoices("math");
 
 renderMath();
 renderKorean();
