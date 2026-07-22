@@ -713,6 +713,8 @@ function initActiveSection(){
       const card = document.getElementById(hash);
       if (card) card.scrollIntoView({behavior:"instant", block:"start"});
     }, 60);
+  } else {
+    window.scrollTo(0, 0);
   }
 }
 
