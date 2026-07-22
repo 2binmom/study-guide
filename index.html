@@ -690,12 +690,14 @@ function updateProgress(key, slugs, done){
   if (cnt) cnt.textContent = `${count}/${slugs.length}`;
 }
 
-function showSection(id, evt){
+function showSection(id, evt, skipScroll){
   if (evt) evt.preventDefault();
   document.querySelectorAll(".book-section").forEach(s => s.classList.toggle("active", s.id === id));
   document.querySelectorAll("nav.toc a").forEach(a => a.classList.toggle("active", a.getAttribute("href") === "#" + id));
-  const el = document.getElementById(id);
-  if (el) el.scrollIntoView({behavior:"smooth", block:"start"});
+  if (!skipScroll){
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({behavior:"smooth", block:"start"});
+  }
   history.replaceState(null, "", "#" + id);
 }
 
@@ -705,7 +707,7 @@ function initActiveSection(){
   if (hash === "math" || hash === "korean" || hash === "quiz") target = hash;
   else if (hash.indexOf("card-math-") === 0) target = "math";
   else if (hash.indexOf("card-kor-") === 0) target = "korean";
-  showSection(target);
+  showSection(target, null, true);
   if (hash.indexOf("card-") === 0){
     setTimeout(() => {
       const card = document.getElementById(hash);
