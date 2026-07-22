@@ -516,6 +516,7 @@
   <div style="margin-top:10px;">© 2026 투빈맘 · <a href="https://www.instagram.com/2bin_mom/?hl=ko" target="_blank" rel="noopener">@2bin_mom</a></div>
 </footer>
 <script>
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 /* =========================================================================
    쿠팡 파트너스 링크 입력란
    ----------------------------------------------------------------------
@@ -737,6 +738,15 @@ function showSection(id, evt, skipScroll){
   history.replaceState(null, "", "#" + id);
 }
 
+function correctInitialScroll(){
+  const hash = location.hash.replace("#", "");
+  if (hash.indexOf("card-") === 0){
+    const card = document.getElementById(hash);
+    if (card) { card.scrollIntoView({behavior:"instant", block:"start"}); return; }
+  }
+  window.scrollTo(0, 0);
+}
+
 function initActiveSection(){
   const hash = location.hash.replace("#", "");
   let target = "math";
@@ -744,14 +754,15 @@ function initActiveSection(){
   else if (hash.indexOf("card-math-") === 0) target = "math";
   else if (hash.indexOf("card-kor-") === 0) target = "korean";
   showSection(target, null, true);
+  correctInitialScroll();
   if (hash.indexOf("card-") === 0){
-    setTimeout(() => {
-      const card = document.getElementById(hash);
-      if (card) card.scrollIntoView({behavior:"instant", block:"start"});
-    }, 60);
-  } else {
-    window.scrollTo(0, 0);
+    setTimeout(correctInitialScroll, 60);
   }
+  // 카카오톡 인앱 브라우저 등에서 이미지 로딩으로 레이아웃이 늦게 자리잡으며
+  // 브라우저가 URL 해시로 다시 스크롤을 밀어버리는 경우가 있어, 로드 완료 후에도 한 번 더 보정
+  window.addEventListener("load", () => setTimeout(correctInitialScroll, 50));
+  setTimeout(correctInitialScroll, 400);
+  setTimeout(correctInitialScroll, 1200);
 }
 
 /* ---- 맞춤 추천 퀴즈 ---- */
@@ -858,5 +869,5 @@ renderMath();
 renderKorean();
 applyDoneState();
 initActiveSection();
-window.addEventListener("pageshow", function(){ window.scrollTo(0, 0); });
+window.addEventListener("pageshow", correctInitialScroll);
 </script>
