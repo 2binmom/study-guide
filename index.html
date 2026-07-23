@@ -151,20 +151,59 @@
     .card{flex-basis:220px; width:220px;}
   }
   .level-label .scroll-hint{font-size:12.5px; font-weight:700; color:var(--sub); margin-left:auto;}
-  .search-bar{
-    display:flex; align-items:center; gap:8px; background:#FFF; border:1.5px solid var(--line);
-    border-radius:999px; padding:6px 8px 6px 16px; margin:18px 0 6px; box-shadow:var(--shadow);
+  /* 검색 */
+  .search-box{
+    display:flex; align-items:center; gap:8px;
+    background:var(--card); border:1.5px solid var(--line); border-radius:999px;
+    padding:12px 16px;
   }
-  .search-bar input{
-    flex:1; border:none; outline:none; font-size:14.5px; font-family:inherit; background:transparent; color:var(--ink);
+  .search-box:focus-within{border-color:var(--pink);}
+  .search-box svg{flex-shrink:0; color:var(--pink-deep);}
+  .search-box input{
+    flex:1; border:none; outline:none; background:none;
+    font-size:14.5px; color:var(--ink); font-family:inherit;
   }
-  .search-bar input::placeholder{color:var(--sub);}
+  .search-box input::placeholder{color:var(--sub);}
   .search-clear{
-    width:26px; height:26px; border-radius:50%; border:none; background:var(--pink-bg); color:var(--pink-deep);
-    font-size:13px; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+    display:none; flex-shrink:0; border:none; background:var(--pink-bg); color:var(--pink-deep);
+    width:22px; height:22px; border-radius:50%; font-size:13px; line-height:1; cursor:pointer;
   }
-  .search-clear:hover{background:var(--pink); color:#fff;}
-  .search-empty{text-align:center; color:var(--sub); font-size:13.5px; padding:24px 0; display:none;}
+  .search-clear.show{display:block;}
+
+  /* bottom app nav (모바일 앱처럼 하단 고정) + 검색 단독 화면 */
+  body{padding-bottom:calc(64px + env(safe-area-inset-bottom));}
+  body.search-open{overflow:hidden;}
+  .bottom-nav{
+    position:fixed; left:0; right:0; bottom:0; z-index:60;
+    display:flex; background:var(--card); border-top:1px solid var(--line);
+    padding:6px 0 calc(6px + env(safe-area-inset-bottom));
+    box-shadow:0 -2px 12px rgba(58,42,51,.06);
+  }
+  .bottom-nav-btn{
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:2px;
+    background:none; border:none; padding:6px 4px; color:var(--sub); font-size:11px; font-family:inherit; cursor:pointer;
+  }
+  .bottom-nav-btn svg{color:var(--sub);}
+  .bottom-nav-btn.active{color:var(--pink-deep); font-weight:700;}
+  .bottom-nav-btn.active svg{color:var(--pink-deep);}
+
+  .search-screen{
+    position:fixed; inset:0; z-index:50; background:var(--bg);
+    display:flex; flex-direction:column;
+    opacity:0; pointer-events:none; transition:opacity .18s ease;
+  }
+  .search-screen.open{opacity:1; pointer-events:auto;}
+  .search-screen-head{
+    background:var(--card); border-bottom:1px solid var(--line);
+    padding:calc(16px + env(safe-area-inset-top)) 18px 14px; flex-shrink:0;
+  }
+  .search-screen-body{
+    flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    padding:18px 18px calc(80px + env(safe-area-inset-bottom));
+  }
+  .search-hint{text-align:center; color:var(--sub); font-size:14px; margin-top:64px; line-height:1.7;}
+  .search-results-grid{display:flex; flex-direction:column; gap:14px; max-width:520px; margin:0 auto;}
+  .search-results-grid .card{width:100%; flex:none; scroll-snap-align:none;}
   .card{
     background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
     overflow:hidden; box-shadow:var(--shadow); display:flex; flex-direction:column;
@@ -350,11 +389,6 @@
 </nav>
 
 <div class="wrap">
-<div class="search-bar" id="bookSearchBar">
-  <input type="search" id="bookSearch" placeholder="🔍 문제집 이름으로 검색해보세요" oninput="filterBooks()">
-  <button type="button" class="search-clear" onclick="clearBookSearch()" aria-label="검색어 지우기">✕</button>
-</div>
-<div class="search-empty" id="searchEmpty">검색 결과가 없어요 🥲 다른 키워드로 찾아보세요</div>
 
   <!-- ============ 수학 ============ -->
   <section class="book-section" id="math">
@@ -557,6 +591,31 @@
   <div>이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받을 수 있습니다.</div>
   <div style="margin-top:10px;">© 2026 투빈맘 · <a href="https://www.instagram.com/2bin_mom/?hl=ko" target="_blank" rel="noopener">@2bin_mom</a></div>
 </footer>
+
+<div class="search-screen" id="searchScreen">
+  <div class="search-screen-head">
+    <div class="search-box">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="book-search-input" placeholder="문제집 이름으로 찾기..." oninput="applySearch()" autocomplete="off">
+      <button type="button" class="search-clear" id="book-search-clear" onclick="clearSearch()" aria-label="검색 지우기">✕</button>
+    </div>
+  </div>
+  <div class="search-screen-body" id="searchResults">
+    <p class="search-hint">🔍 문제집 이름을 입력해보세요</p>
+  </div>
+</div>
+
+<nav class="bottom-nav">
+  <button type="button" class="bottom-nav-btn active" id="bottomNavHome" onclick="goHome()">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11.5 12 4l9 7.5"/><path d="M5 10v9a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1v-9"/></svg>
+    <span>홈</span>
+  </button>
+  <button type="button" class="bottom-nav-btn" id="bottomNavSearch" onclick="openSearchScreen()">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <span>검색</span>
+  </button>
+</nav>
+
 <script>
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
 /* =========================================================================
@@ -792,41 +851,74 @@ function showSection(id, evt, skipScroll){
     if (el) el.scrollIntoView({behavior:"smooth", block:"start"});
   }
   history.replaceState(null, "", "#" + id);
-  const searchBar = document.getElementById("bookSearchBar");
-  if (searchBar) searchBar.style.display = (id === "quiz") ? "none" : "";
-  filterBooks();
 }
 
-function filterBooks(){
-  const active = document.querySelector(".book-section.active");
-  const emptyMsg = document.getElementById("searchEmpty");
-  if (!active || active.id === "quiz"){
-    if (emptyMsg) emptyMsg.style.display = "none";
+/* ---- 검색: 홈과 분리된 단독 화면 (소시네 스타일) ---- */
+const SEARCH_INDEX = [];
+function buildSearchIndex(){
+  const defs = [
+    { books: MATH_BOOKS, accent: "blue" },
+    { books: KOR_BOOKS, accent: "orange" },
+  ];
+  defs.forEach(def => {
+    def.books.forEach(b => {
+      SEARCH_INDEX.push({ book: b, accent: def.accent, orderLabel: b.order, tags: [b.publisher, b.level], pubFirst: true });
+    });
+  });
+}
+
+function getSearchQuery(){
+  const input = document.getElementById("book-search-input");
+  return input ? input.value.trim().toLowerCase() : "";
+}
+
+function applySearch(){
+  const q = getSearchQuery();
+  document.getElementById("book-search-clear").classList.toggle("show", !!q);
+  renderSearchResults();
+}
+
+function clearSearch(){
+  const input = document.getElementById("book-search-input");
+  if (input) input.value = "";
+  document.getElementById("book-search-clear").classList.remove("show");
+  renderSearchResults();
+  input.focus();
+}
+
+function renderSearchResults(){
+  const q = getSearchQuery();
+  const container = document.getElementById("searchResults");
+  if (!q){
+    container.innerHTML = `<p class="search-hint">🔍 문제집 이름을 입력해보세요</p>`;
     return;
   }
-  const q = document.getElementById("bookSearch").value.trim().toLowerCase();
-  let anyMatch = false;
-  active.querySelectorAll(".level-label").forEach(label => {
-    const wrap = label.nextElementSibling;
-    if (!wrap || !wrap.classList.contains("carousel-wrap")) return;
-    const grid = wrap.querySelector(".grid");
-    let groupHasMatch = false;
-    grid.querySelectorAll(".card").forEach(card => {
-      const match = !q || (card.dataset.title || "").includes(q);
-      card.style.display = match ? "" : "none";
-      if (match){ groupHasMatch = true; anyMatch = true; }
-    });
-    label.style.display = groupHasMatch ? "" : "none";
-    wrap.style.display = groupHasMatch ? "" : "none";
-  });
-  if (emptyMsg) emptyMsg.style.display = (q && !anyMatch) ? "block" : "none";
+  const matches = SEARCH_INDEX.filter(e => e.book.title.toLowerCase().includes(q));
+  if (matches.length === 0){
+    container.innerHTML = `<p class="search-hint">검색 결과가 없어요 🥲<br>다른 이름으로 찾아보세요</p>`;
+    return;
+  }
+  container.innerHTML = `<div class="search-results-grid">${matches.map(e => cardHTML(e.book, e.accent, e.orderLabel, e.tags, e.pubFirst)).join("")}</div>`;
+  applyDoneState();
 }
 
-function clearBookSearch(){
-  const input = document.getElementById("bookSearch");
-  input.value = "";
-  filterBooks();
-  input.focus();
+function setBottomNavActive(which){
+  document.getElementById("bottomNavHome").classList.toggle("active", which === "home");
+  document.getElementById("bottomNavSearch").classList.toggle("active", which === "search");
+}
+
+function openSearchScreen(){
+  document.getElementById("searchScreen").classList.add("open");
+  document.body.classList.add("search-open");
+  setBottomNavActive("search");
+  setTimeout(() => document.getElementById("book-search-input").focus(), 200);
+}
+
+function goHome(){
+  document.getElementById("searchScreen").classList.remove("open");
+  document.body.classList.remove("search-open");
+  setBottomNavActive("home");
+  window.scrollTo({top: 0, behavior: "smooth"});
 }
 
 function correctInitialScroll(){
@@ -958,6 +1050,7 @@ renderLevelChoices("math");
 
 renderMath();
 renderKorean();
+buildSearchIndex();
 applyDoneState();
 initActiveSection();
 window.addEventListener("pageshow", correctInitialScroll);
