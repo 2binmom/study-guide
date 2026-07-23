@@ -151,6 +151,20 @@
     .card{flex-basis:220px; width:220px;}
   }
   .level-label .scroll-hint{font-size:12.5px; font-weight:700; color:var(--sub); margin-left:auto;}
+  .search-bar{
+    display:flex; align-items:center; gap:8px; background:#FFF; border:1.5px solid var(--line);
+    border-radius:999px; padding:6px 8px 6px 16px; margin:18px 0 6px; box-shadow:var(--shadow);
+  }
+  .search-bar input{
+    flex:1; border:none; outline:none; font-size:14.5px; font-family:inherit; background:transparent; color:var(--ink);
+  }
+  .search-bar input::placeholder{color:var(--sub);}
+  .search-clear{
+    width:26px; height:26px; border-radius:50%; border:none; background:var(--pink-bg); color:var(--pink-deep);
+    font-size:13px; cursor:pointer; flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  }
+  .search-clear:hover{background:var(--pink); color:#fff;}
+  .search-empty{text-align:center; color:var(--sub); font-size:13.5px; padding:24px 0; display:none;}
   .card{
     background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
     overflow:hidden; box-shadow:var(--shadow); display:flex; flex-direction:column;
@@ -336,6 +350,11 @@
 </nav>
 
 <div class="wrap">
+<div class="search-bar" id="bookSearchBar">
+  <input type="search" id="bookSearch" placeholder="🔍 문제집 이름으로 검색해보세요" oninput="filterBooks()">
+  <button type="button" class="search-clear" onclick="clearBookSearch()" aria-label="검색어 지우기">✕</button>
+</div>
+<div class="search-empty" id="searchEmpty">검색 결과가 없어요 🥲 다른 키워드로 찾아보세요</div>
 
   <!-- ============ 수학 ============ -->
   <section class="book-section" id="math">
@@ -598,7 +617,7 @@ function cardHTML(book, accent, orderLabel, extraTags, pubFirst){
   const tags = extraTags.map((t,i) => `<span class="tag${(pubFirst && i===0) ? " tag-pub" : ""}">${t}</span>`).join("");
   const link = coupangUrl(book.slug, book.title);
   return `
-    <div class="card" id="card-${book.slug}" data-slug="${book.slug}">
+    <div class="card" id="card-${book.slug}" data-slug="${book.slug}" data-title="${(book.title + ' ' + (book.publisher||'')).toLowerCase()}">
       <a class="cover" href="${link}" target="_blank" rel="noopener nofollow sponsored" aria-label="${book.title} 구매 페이지로 이동">
         ${orderLabel ? `<span class="order-badge">${orderLabel}</span>` : ""}
         <img src="${IMAGE_DATA[book.slug] || (IMAGE_BASE + book.slug + '.jpg')}" alt="${book.title} 표지"
@@ -773,6 +792,41 @@ function showSection(id, evt, skipScroll){
     if (el) el.scrollIntoView({behavior:"smooth", block:"start"});
   }
   history.replaceState(null, "", "#" + id);
+  const searchBar = document.getElementById("bookSearchBar");
+  if (searchBar) searchBar.style.display = (id === "quiz") ? "none" : "";
+  filterBooks();
+}
+
+function filterBooks(){
+  const active = document.querySelector(".book-section.active");
+  const emptyMsg = document.getElementById("searchEmpty");
+  if (!active || active.id === "quiz"){
+    if (emptyMsg) emptyMsg.style.display = "none";
+    return;
+  }
+  const q = document.getElementById("bookSearch").value.trim().toLowerCase();
+  let anyMatch = false;
+  active.querySelectorAll(".level-label").forEach(label => {
+    const wrap = label.nextElementSibling;
+    if (!wrap || !wrap.classList.contains("carousel-wrap")) return;
+    const grid = wrap.querySelector(".grid");
+    let groupHasMatch = false;
+    grid.querySelectorAll(".card").forEach(card => {
+      const match = !q || (card.dataset.title || "").includes(q);
+      card.style.display = match ? "" : "none";
+      if (match){ groupHasMatch = true; anyMatch = true; }
+    });
+    label.style.display = groupHasMatch ? "" : "none";
+    wrap.style.display = groupHasMatch ? "" : "none";
+  });
+  if (emptyMsg) emptyMsg.style.display = (q && !anyMatch) ? "block" : "none";
+}
+
+function clearBookSearch(){
+  const input = document.getElementById("bookSearch");
+  input.value = "";
+  filterBooks();
+  input.focus();
 }
 
 function correctInitialScroll(){
