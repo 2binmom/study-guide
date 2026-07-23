@@ -126,13 +126,36 @@
 
   /* card grid */
   .grid{
-    display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px;
+    display:flex; gap:14px; overflow-x:auto; padding:2px 2px 14px;
+    scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;
   }
+  .grid::-webkit-scrollbar{height:7px;}
+  .grid::-webkit-scrollbar-track{background:transparent;}
+  .grid::-webkit-scrollbar-thumb{background:var(--pink-light); border-radius:999px;}
+  .carousel-wrap{position:relative;}
+  .carousel-btn{
+    position:absolute; top:97px; transform:translateY(-50%); z-index:5;
+    width:52px; height:52px; border-radius:50%; border:2px solid #fff; cursor:pointer;
+    background:var(--pink); color:#fff; font-size:28px; font-weight:900; line-height:1;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 4px 14px rgba(224,86,122,0.4); transition:background .15s, transform .15s;
+  }
+  .carousel-btn:hover{background:var(--pink-deep); transform:translateY(-50%) scale(1.07);}
+  .carousel-btn:active{transform:translateY(-50%) scale(0.95);}
+  .carousel-btn.prev{left:-10px;}
+  .carousel-btn.next{right:-10px;}
+  @media (max-width:600px){
+    .carousel-btn{width:44px; height:44px; font-size:24px; top:82px;}
+    .carousel-btn.prev{left:-4px;}
+    .carousel-btn.next{right:-4px;}
+    .card{flex-basis:220px; width:220px;}
+  }
+  .level-label .scroll-hint{font-size:12.5px; font-weight:700; color:var(--sub); margin-left:auto;}
   .card{
     background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
     overflow:hidden; box-shadow:var(--shadow); display:flex; flex-direction:column;
     transition:transform .15s ease, box-shadow .15s ease; position:relative;
-    scroll-margin-top:80px;
+    scroll-margin-top:80px; flex:0 0 260px; width:260px; scroll-snap-align:start;
   }
   .cover{
     width:100%; aspect-ratio:4/3; background:#FBEAEE; display:flex; align-items:center;
@@ -612,15 +635,29 @@ function renderGrouped(sectionKey, books, groupOrder, accent, gridId, tableId){
   })));
   const container = document.getElementById(gridId);
   let html = "";
+  let rowIdx = 0;
   groupOrder.forEach(group => {
     const items = books.filter(b => b.group === group);
     if (!items.length) return;
-    html += `<div class="level-label">${group}</div>`;
-    html += `<div class="grid">${items.map(b =>
-      cardHTML(b, accent, b.order, [b.publisher, b.level], true)
-    ).join("")}</div>`;
+    rowIdx++;
+    const rowId = `${gridId}-row-${rowIdx}`;
+    html += `<div class="level-label">${group} <span class="scroll-hint">옆으로 넘겨보세요 →</span></div>`;
+    html += `<div class="carousel-wrap">
+      <button type="button" class="carousel-btn prev" onclick="scrollCarousel('${rowId}',-1)" aria-label="이전 카드">‹</button>
+      <div class="grid" id="${rowId}">${items.map(b =>
+        cardHTML(b, accent, b.order, [b.publisher, b.level], true)
+      ).join("")}</div>
+      <button type="button" class="carousel-btn next" onclick="scrollCarousel('${rowId}',1)" aria-label="다음 카드">›</button>
+    </div>`;
   });
   container.innerHTML = html;
+}
+
+function scrollCarousel(gridId, dir){
+  const grid = document.getElementById(gridId);
+  if (!grid) return;
+  const amount = Math.round(grid.clientWidth * 0.85) * dir;
+  grid.scrollBy({left: amount, behavior:"smooth"});
 }
 
 const MATH_BOOKS = [
